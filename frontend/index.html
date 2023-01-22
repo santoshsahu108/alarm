@@ -1,0 +1,100 @@
+<html><head>
+
+</head>
+
+
+
+<body>
+
+	<center><h2>Current time : <p id='p1'></p></center>
+	</h2>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+	<script>
+	const zeroFill = n => {
+			return ('0' + n).slice(-2);
+		}
+
+		// Creates interval
+		const interval = setInterval(() => {
+			// Get current time
+			const now = new Date();
+
+			// Format date as in mm/dd/aaaa hh:ii:ss
+			const dateTime = zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
+
+			// Display the date and time on the screen using div#date-time
+			document.getElementById('p1').innerHTML = dateTime;
+			a(dateTime)
+		}, 1000);
+
+		
+		async function a(dateTime){
+			var response =await fetch("http://localhost:3000/ringalarm")
+			var ringA = await response.json()
+			if(ringA){
+				console.log("great>>>>>>>>>")
+				document.getElementById("SongB").click()				
+			}
+		}
+	</script>
+	<center>
+	<form action="http://localhost:3000/setalarm" id='idForm'>
+		Set Alarm: <input type="text" name="alarm" placeholder="HH:MM:SS" pattern="(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)" title="Enter in valid Format"> <br>
+
+		<input type="submit" value="setAlarm">
+
+	</form>
+	<form action="http://localhost:3000/getalarm" method="GET">
+		<input type="submit" value="getAlarm">
+	</form>
+	<form action="http://localhost:3000/updatealarm" method="POST">
+		Update Alarm: <input type="text" name="alarmName" placeholder="Name of alarm">
+		<input type="text" name="alarmTime" placeholder="New alarm time" pattern="(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)" title="Enter in valid Format">
+		<input type="submit" value="update">
+	</form>
+	<audio id="myAudio">
+	<source src="http://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3" type="audio/mpeg">
+		Your browser does not support the audio element.
+	</audio>
+	<button onclick="playAudio()" type="button" id ="SongB" hidden>play </button>
+	</center>
+	<script>
+		var x = document.getElementById("myAudio");
+
+		function playAudio() {
+			
+			x.play();
+			setInterval(function(){
+        
+        if(x.currentTime>5){
+          
+          x.pause();
+        }
+      },1000); 
+		} </script>
+
+
+</body>
+
+<script>
+$("#idForm").submit(function(e) {
+
+    var form = $(this);
+    var url = form.attr('action');
+
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: form.serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               alert(data); // show response from the php script.
+           }
+         });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
+
+</html>
